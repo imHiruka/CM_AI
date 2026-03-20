@@ -1,17 +1,13 @@
 import asyncio
 import os
-import time
 
 import discord
-from pydantic_core.core_schema import model_schema
 
 import bot_triggers
 import random
 from discord.ext import commands
 from google import genai
 from google.genai import types
-
-from bot_triggers import load_config
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -25,6 +21,8 @@ max_time_to_wait = 15
 
 min_chance_to_say_something = 1
 max_chance_to_say_something = 10
+
+max_words_to_collect = 20
 
 client_gemini = genai.Client(api_key=GEMINI_API_KEY)
 
@@ -60,6 +58,11 @@ async def on_ready():
         print("Loaded config!")
     except Exception as e2:
         print(f"Failed to load configs, ERR={e2}")
+
+def calc_random(v1, v2):
+    v3 = random.randint(v1, v2)
+
+    return v3
 
 @bot.event
 async def on_message(message):
@@ -106,15 +109,20 @@ async def on_message(message):
                     await message.reply("Haha... Let's not ask such silly questions!")
             except Exception as e:
                 await message.reply(f"Got exception {e}")
-    if bot_triggers.current_mode == bot_triggers.MODES[1]:
+    if bot_triggers.current_mode == bot_triggers.MODES[1] and not user_input.startswith("//"):
         if not user_input in bot_triggers.nono_words:
             bot_triggers.add_word(user_input, user=message.author)
         chance = random.randint(min_chance_to_say_something, max_chance_to_say_something)
         if chance > max_chance_to_say_something / 2:
-            if len(bot_triggers.memory) < 1:
-                await message.channel.send("Inside every demon is a rainbow!")
-            else:
-                chosen_message = random.choice(list(bot_triggers.memory))
-                await message.channel.send(chosen_message)
+            if len(bot_triggers.memory) > 0:
+                all_words = list(bot_triggers.memory)
+                selected_words = []
+                for word in all_words:
+                    if len(selected_words) < max_words_to_collect:
+                        selected_words.append(word)
+                random.shuffle(selected_words)
+                sentence = " ".join(selected_words)
+                await message.channel.send(sentence)
+
         await bot.process_commands(message)
 bot.run(TOKEN)
