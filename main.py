@@ -214,8 +214,10 @@ async def on_message(message):
                 all_words = list(bot_triggers.memory)
                 selected_words = []
                 for word in all_words:
+                    chance_to_select_word = random.randint(0, 100)
                     if len(selected_words) < bot_triggers.max_words_to_collect:
-                        selected_words.append(word)
+                        if chance_to_select_word > 50:
+                            selected_words.append(word)
                 random.shuffle(selected_words)
                 sentence = " ".join(selected_words)
                 await message.channel.send(sentence)
