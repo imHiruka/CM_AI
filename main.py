@@ -41,6 +41,14 @@ safety_config = [
 
 bot = commands.Bot(command_prefix="//", intents=intents)
 
+if TOKEN is None:
+    print("Failed to load discord token. Please add an environmental variable and name it \"CM_AI_API_KEY\".")
+    exit(1)
+
+if GEMINI_API_KEY is None:
+    print("Failed to load gemini token. Please add an environmental variable and name it \"GEMINI_API_KEY\".")
+    exit(1)
+
 @bot.event
 async def on_ready():
     global saved_config_data
