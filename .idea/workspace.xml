@@ -6,10 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4f2df4b1-0bdd-4418-be57-4fa5f264600b" name="Changes" comment="it works ig so uh yeah">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot_triggers.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_triggers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/memory.json" beforeDir="false" afterPath="$PROJECT_DIR$/memory.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saved_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/saved_config.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -141,7 +138,15 @@
       <option name="project" value="LOCAL" />
       <updated>1773988147327</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="it works ig so uh yeah">
+      <option name="closed" value="true" />
+      <created>1773991481675</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1773991481675</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

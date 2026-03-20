@@ -139,7 +139,9 @@ async def on_message(message):
     if bot_triggers.current_mode == bot_triggers.MODES[1] and not user_input.startswith("//"):
         if not user_input in bot_triggers.nono_words:
             bot_triggers.add_word(user_input, user=message.author)
+        else:
             await message.channel.send("Let's not say that!")
+            return
         chance = random.randint(bot_triggers.min_chance_to_say_something, bot_triggers.max_chance_to_say_something)
         if chance > bot_triggers.max_chance_to_say_something / 2:
             if len(bot_triggers.memory) > 0:
