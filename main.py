@@ -68,61 +68,121 @@ async def on_message(message):
     if message.author == bot.user:
         return
     user_input = message.content.replace(f'<@!{bot.user.id}>', '').replace(f'<@{bot.user.id}>', '').strip()
+    def check(m):
+        return m.author == message.author and m.channel == message.channel
     if bot.user.mentioned_in(message):
-        if user_input.startswith('//'):
-            if len(user_input.strip()) <= 2:
-                return
-            prompt = user_input[2:].split(" ", 1)
-            command_name = prompt[0].lower()
-            if command_name == "change_mode":
-                await message.channel.send("Sure! What mode would you like to use? Modes are: \"Gemini\", \"Stupid\" and \"NormalBot\".")
-                def check(m):
-                    return m.author == message.author and m.channel == message.channel
-                try:
-                    reply = await bot.wait_for('message', check=check, timeout=15.0)
-                    match reply.content.lower():
-                        case "gemini":
-                            bot_triggers.current_mode = bot_triggers.MODES[0]
-                            await message.channel.send(f"Current mode is now: {bot_triggers.MODES[0]}")
-                        case "stupid":
-                            bot_triggers.current_mode = bot_triggers.MODES[1]
-                            await message.channel.send(f"Current mode is now: {bot_triggers.MODES[1]}")
-                        case "commands":
-                            bot_triggers.current_mode = bot_triggers.MODES[2]
-                            await message.channel.send(f"Current mode is now: {bot_triggers.MODES[2]}")
-                        case _:
-                            bot_triggers.current_mode = bot_triggers.MODES[0]
-                            await message.channel.send(f"Current mode is now: {bot_triggers.MODES[0]}")
-                    bot_triggers.save_config()
-                except asyncio.TimeoutError:
-                    await message.channel.send(f"You took too long to respond! Current respond_timeout is set to {bot_triggers.reply_timeout}")
-            elif command_name == "current_mode":
-                await message.channel.send(f"Selected current mode is: {bot_triggers.current_mode}")
-            elif command_name == "add_nono_word":
-                await message.channel.send("Please type the word you wish to add to the NoNo List!")
-                def check(m):
-                    return m.author == message.author and m.channel == message.channel
-                try:
-                    user_response = await bot.wait_for('message', check=check, timeout=bot_triggers.reply_timeout)
-                    bad_word = user_response.content.lower().strip()
-                    bot_triggers.nono_words.append(bad_word)
-                    await message.channel.send(f"{bad_word} added to the NoNo List!")
-                except asyncio.TimeoutError:
-                    await message.channel.send(f"You took too long to respond! Current respond_timeout is set to {bot_triggers.reply_timeout}")
-            elif command_name == "remove_nono_word":
-                await message.channel.send("Please type the word you wish to remove from the NoNo List!")
-                def check(m):
-                    return m.author == message.author and m.channel == message.channel
-                try:
-                    user_response = await bot.wait_for('message', check=check, timeout=bot_triggers.reply_timeout)
-                    bad_word = user_response.content.lower()
-                    if not bad_word in bot_triggers.nono_words:
-                        await message.channel.send("That word is not even in the NoNo Words list!")
-                    else:
-                        bot_triggers.nono_words.remove(bad_word)
-                        await message.channel.send(f"Removed {bad_word} from the NoNo list!")
-                except asyncio.TimeoutError:
-                    await message.channel.send(f"You took too long to respond! Current respond_timeout is set to {bot_triggers.reply_timeout}")
+        if message.author.guild_permissions.administrator:
+            if user_input.startswith('//'):
+                if len(user_input.strip()) <= 2:
+                    return
+                prompt = user_input[2:].split(" ", 1)
+                command_name = prompt[0].lower()
+                if command_name == "change_mode":
+                    await message.channel.send("Sure! What mode would you like to use? Modes are: \"Gemini\", \"Stupid\" and \"NormalBot\".")
+                    try:
+                        reply = await bot.wait_for('message', check=check, timeout=15.0)
+                        match reply.content.lower():
+                            case "gemini":
+                                bot_triggers.current_mode = bot_triggers.MODES[0]
+                                await message.channel.send(f"Current mode is now: {bot_triggers.MODES[0]}")
+                            case "stupid":
+                                bot_triggers.current_mode = bot_triggers.MODES[1]
+                                await message.channel.send(f"Current mode is now: {bot_triggers.MODES[1]}")
+                            case "commands":
+                                bot_triggers.current_mode = bot_triggers.MODES[2]
+                                await message.channel.send(f"Current mode is now: {bot_triggers.MODES[2]}")
+                            case _:
+                                bot_triggers.current_mode = bot_triggers.MODES[0]
+                                await message.channel.send(f"Current mode is now: {bot_triggers.MODES[0]}")
+                        bot_triggers.save_config()
+                    except asyncio.TimeoutError:
+                        await message.channel.send(f"You took too long to respond! Current respond_timeout is set to {bot_triggers.reply_timeout}")
+                        return
+                elif command_name == "current_mode":
+                    await message.channel.send(f"Selected current mode is: {bot_triggers.current_mode}")
+                elif command_name == "add_nono_word":
+                    await message.channel.send("Please type the word you wish to add to the NoNo List!")
+                    try:
+                        user_response = await bot.wait_for('message', check=check, timeout=bot_triggers.reply_timeout)
+                        bad_word = user_response.content.lower().strip()
+                        bot_triggers.nono_words.append(bad_word)
+                        await message.channel.send(f"{bad_word} added to the NoNo List!")
+                    except asyncio.TimeoutError:
+                        await message.channel.send(f"You took too long to respond! Current respond_timeout is set to {bot_triggers.reply_timeout}")
+                        return
+                elif command_name == "remove_nono_word":
+                    await message.channel.send("Please type the word you wish to remove from the NoNo List!")
+                    try:
+                        user_response = await bot.wait_for('message', check=check, timeout=bot_triggers.reply_timeout)
+                        bad_word = user_response.content.lower()
+                        if not bad_word in bot_triggers.nono_words:
+                            await message.channel.send("That word is not even in the NoNo Words list!")
+                        else:
+                            bot_triggers.nono_words.remove(bad_word)
+                            await message.channel.send(f"Removed {bad_word} from the NoNo list!")
+                    except asyncio.TimeoutError:
+                        await message.channel.send(f"You took too long to respond! Current respond_timeout is set to {bot_triggers.reply_timeout}")
+                        return
+                elif command_name == "set_reply_timeout":
+                    await message.channel.send("Please type in a number!")
+                    try:
+                        user_response = await bot.wait_for('message', check=check, timeout=bot_triggers.reply_timeout)
+                        if int(user_response.content):
+                            bot_triggers.reply_timeout = int(user_response.content)
+                            await message.channel.send(f"Reply timeout has been set to {bot_triggers.reply_timeout}.")
+                        else:
+                            await message.channel.send("You didn't type a number!")
+                            return
+                    except asyncio.TimeoutError:
+                        await message.channel.send(f"You took too long to respond! Current respond_timeout is set to {bot_triggers.reply_timeout}")
+                elif command_name == "set_min_chance_to_say_something":
+                    await message.channel.send("Please type in a number!")
+                    try:
+                        user_response = await bot.wait_for('message', check=check, timeout=bot_triggers.reply_timeout)
+                        if int(user_response.content):
+                            bot_triggers.min_chance_to_say_something = int(user_response.content)
+                            await message.channel.send(f"Minimum chance to say things has been set to {bot_triggers.min_chance_to_say_something}.")
+                        else:
+                            await message.channel.send("You didn't type a number!")
+                            return
+                    except asyncio.TimeoutError:
+                        await message.channel.send(f"You took too long to respond! Current respond_timeout is set to {bot_triggers.reply_timeout}")
+                elif command_name == "set_max_chance_to_say_something":
+                    await message.channel.send("Please type in a number!")
+                    try:
+                        user_response = await bot.wait_for('message', check=check, timeout=bot_triggers.reply_timeout)
+                        if int(user_response.content):
+                            bot_triggers.max_chance_to_say_something = int(user_response.content)
+                            await message.channel.send(f"Maximum chance to say something has been set to {bot_triggers.max_chance_to_say_something}.")
+                        else:
+                            await message.channel.send("You didn't type a number!")
+                            return
+                    except asyncio.TimeoutError:
+                        await message.channel.send(f"You took too long to respond! Current respond_timeout is set to {bot_triggers.reply_timeout}")
+                elif command_name == "set_max_words_to_collect":
+                    await message.channel.send("Please type in a number!")
+                    try:
+                        user_response = await bot.wait_for('message', check=check, timeout=bot_triggers.reply_timeout)
+                        if int(user_response.content):
+                            bot_triggers.max_words_to_collect = int(user_response.content)
+                            await message.channel.send(f"Maximum words to collect has been set to {bot_triggers.max_words_to_collect}.")
+                        else:
+                            await message.channel.send("You didn't type a number!")
+                            return
+                    except asyncio.TimeoutError:
+                        await message.channel.send(f"You took too long to respond! Current respond_timeout is set to {bot_triggers.reply_timeout}")
+                elif command_name == "cmd_list":
+                    await message.channel.send("""***PREFIX: //***
+                    
+                    - *change_mode* - changes the current mode of the bot (Modes are: Gemini, Commands & Stupid)
+                    - *current_mode* - prints out the current mode of the bot.
+                    - *add_nono_word* - adds words to the NoNo List
+                    - *remove_nono_word* - removes words from the NoNo List
+                    - *set_reply_timeout* - set the amount of time you have to reply to the bot
+                    - *set_min_chance_to_say_something* - set the minimum chance for saying something
+                    - *set_max_chance_to_say_something* - set the maximum chance for saying something
+                    - *max_words_to_collect* - set the maximum amount of words to collect per sentence
+                    """)
         elif bot_triggers.current_mode == bot_triggers.MODES[0] and not user_input.startswith("//"):
             try:
                 response = client_gemini.models.generate_content(
@@ -134,6 +194,7 @@ async def on_message(message):
                     await message.reply(response.text[:2000])
                 else:
                     await message.reply("Haha... Let's not ask such silly questions!")
+                    return
             except Exception as e:
                 await message.reply(f"Got exception {e}")
     if bot_triggers.current_mode == bot_triggers.MODES[1] and not user_input.startswith("//"):
@@ -153,6 +214,5 @@ async def on_message(message):
                 random.shuffle(selected_words)
                 sentence = " ".join(selected_words)
                 await message.channel.send(sentence)
-
         await bot.process_commands(message)
 bot.run(TOKEN)
