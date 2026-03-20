@@ -1,3 +1,8 @@
 {
-    "current_mode": "Gemini"
+    "current_mode": "Gemini",
+    "nono_words": [],
+    "min_chance_to_say_something": 1,
+    "max_chance_to_say_something": 10,
+    "max_words_to_collect": 20,
+    "reply_timeout": 15.0
 }
