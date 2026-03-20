@@ -60,7 +60,6 @@ async def on_ready():
 
 def calc_random(v1, v2):
     v3 = random.randint(v1, v2)
-
     return v3
 
 @bot.event
@@ -107,6 +106,7 @@ async def on_message(message):
                         bad_word = user_response.content.lower().strip()
                         bot_triggers.nono_words.append(bad_word)
                         await message.channel.send(f"{bad_word} added to the NoNo List!")
+                        bot_triggers.save_config()
                     except asyncio.TimeoutError:
                         await message.channel.send(f"You took too long to respond! Current respond_timeout is set to {bot_triggers.reply_timeout}")
                         return
@@ -120,6 +120,7 @@ async def on_message(message):
                         else:
                             bot_triggers.nono_words.remove(bad_word)
                             await message.channel.send(f"Removed {bad_word} from the NoNo list!")
+                            bot_triggers.save_config()
                     except asyncio.TimeoutError:
                         await message.channel.send(f"You took too long to respond! Current respond_timeout is set to {bot_triggers.reply_timeout}")
                         return
@@ -130,6 +131,7 @@ async def on_message(message):
                         if int(user_response.content):
                             bot_triggers.reply_timeout = int(user_response.content)
                             await message.channel.send(f"Reply timeout has been set to {bot_triggers.reply_timeout}.")
+                            bot_triggers.save_config()
                         else:
                             await message.channel.send("You didn't type a number!")
                             return
@@ -142,6 +144,7 @@ async def on_message(message):
                         if int(user_response.content):
                             bot_triggers.min_chance_to_say_something = int(user_response.content)
                             await message.channel.send(f"Minimum chance to say things has been set to {bot_triggers.min_chance_to_say_something}.")
+                            bot_triggers.save_config()
                         else:
                             await message.channel.send("You didn't type a number!")
                             return
@@ -154,6 +157,7 @@ async def on_message(message):
                         if int(user_response.content):
                             bot_triggers.max_chance_to_say_something = int(user_response.content)
                             await message.channel.send(f"Maximum chance to say something has been set to {bot_triggers.max_chance_to_say_something}.")
+                            bot_triggers.save_config()
                         else:
                             await message.channel.send("You didn't type a number!")
                             return
@@ -166,6 +170,7 @@ async def on_message(message):
                         if int(user_response.content):
                             bot_triggers.max_words_to_collect = int(user_response.content)
                             await message.channel.send(f"Maximum words to collect has been set to {bot_triggers.max_words_to_collect}.")
+                            bot_triggers.save_config()
                         else:
                             await message.channel.send("You didn't type a number!")
                             return
@@ -181,7 +186,7 @@ async def on_message(message):
                     - *set_reply_timeout* - set the amount of time you have to reply to the bot
                     - *set_min_chance_to_say_something* - set the minimum chance for saying something
                     - *set_max_chance_to_say_something* - set the maximum chance for saying something
-                    - *max_words_to_collect* - set the maximum amount of words to collect per sentence
+                    - *set_max_words_to_collect* - set the maximum amount of words to collect per sentence
                     """)
         elif bot_triggers.current_mode == bot_triggers.MODES[0] and not user_input.startswith("//"):
             try:
